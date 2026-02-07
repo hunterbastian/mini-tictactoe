@@ -118,12 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateProfileWins() {
         const profiles = JSON.parse(localStorage.getItem('tictactoe_profiles'));
         const profile = profiles[currentProfile];
-        
+
         // Get the stat displays
         const profileXWins = document.getElementById('profile-x-wins');
         const profileOWins = document.getElementById('profile-o-wins');
         const statsContainer = document.getElementById('profile-stats-container');
-        
+
         // Don't show wins for guest profile
         if (currentProfile === 'guest') {
             statsContainer.style.display = 'none';
@@ -131,6 +131,20 @@ document.addEventListener('DOMContentLoaded', function() {
             statsContainer.style.display = 'flex';
             profileXWins.textContent = profile.xWins;
             profileOWins.textContent = profile.oWins;
+        }
+
+        // Update main page scoreboard
+        updateScoreboard();
+    }
+
+    function updateScoreboard() {
+        const profiles = JSON.parse(localStorage.getItem('tictactoe_profiles'));
+        const profile = profiles[currentProfile];
+        const scoreX = document.getElementById('score-x');
+        const scoreO = document.getElementById('score-o');
+        if (scoreX && scoreO && profile) {
+            scoreX.textContent = profile.xWins;
+            scoreO.textContent = profile.oWins;
         }
     }
     
@@ -198,12 +212,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function selectProfile(name) {
         currentProfile = name.toLowerCase();
         localStorage.setItem('tictactoe_currentProfile', currentProfile);
-        
+
         // Update UI
         currentProfileName.textContent = name;
         currentProfileDisplay.textContent = name;
-        
+
         updateProfileWins();
+        updateScoreboard();
     }
     
     function incrementWins() {
@@ -427,28 +442,78 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function findBestMove(depth) {
-        // Try to win
+        if (depth >= 2) {
+            // Use full minimax for hard mode - truly unbeatable
+            return minimaxBestMove();
+        }
+
+        // For medium mode (depth 1): simple heuristics
         const winMove = findWinningMove(aiPlayer);
         if (winMove !== null) return winMove;
-        
-        // Block opponent from winning
+
         const blockMove = findWinningMove(aiPlayer === 'X' ? 'O' : 'X');
         if (blockMove !== null) return blockMove;
-        
-        // If depth >= 2, use more strategy
-        if (depth >= 2) {
-            // Take center if available
-            if (board[4] === '') return 4;
-            
-            // Take corners if available
-            const corners = [0, 2, 6, 8].filter(i => board[i] === '');
-            if (corners.length > 0) {
-                return corners[Math.floor(Math.random() * corners.length)];
+
+        return makeRandomMove();
+    }
+
+    function minimaxBestMove() {
+        let bestScore = -Infinity;
+        let bestMove = null;
+
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === '') {
+                board[i] = aiPlayer;
+                const score = minimax(board, 0, false);
+                board[i] = '';
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
             }
         }
-        
-        // Otherwise make a random move
-        return makeRandomMove();
+        return bestMove;
+    }
+
+    function minimax(boardState, depth, isMaximizing) {
+        const humanPlayer = aiPlayer === 'X' ? 'O' : 'X';
+        const winner = checkWinner(boardState);
+
+        if (winner === aiPlayer) return 10 - depth;
+        if (winner === humanPlayer) return depth - 10;
+        if (!boardState.includes('')) return 0;
+
+        if (isMaximizing) {
+            let best = -Infinity;
+            for (let i = 0; i < boardState.length; i++) {
+                if (boardState[i] === '') {
+                    boardState[i] = aiPlayer;
+                    best = Math.max(best, minimax(boardState, depth + 1, false));
+                    boardState[i] = '';
+                }
+            }
+            return best;
+        } else {
+            let best = Infinity;
+            for (let i = 0; i < boardState.length; i++) {
+                if (boardState[i] === '') {
+                    boardState[i] = humanPlayer;
+                    best = Math.min(best, minimax(boardState, depth + 1, true));
+                    boardState[i] = '';
+                }
+            }
+            return best;
+        }
+    }
+
+    function checkWinner(boardState) {
+        for (let i = 0; i < winningConditions.length; i++) {
+            const [a, b, c] = winningConditions[i];
+            if (boardState[a] !== '' && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                return boardState[a];
+            }
+        }
+        return null;
     }
     
     function findWinningMove(player) {
@@ -690,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function checkResult() {
         let roundWon = false;
-        
+
         for (let i = 0; i < winningConditions.length; i++) {
             const [a, b, c] = winningConditions[i];
             if (board[a] === '' || board[b] === '' || board[c] === '') {
@@ -699,16 +764,21 @@ document.addEventListener('DOMContentLoaded', function() {
             if (board[a] === board[b] && board[a] === board[c]) {
                 roundWon = true;
 
+                // Highlight winning cells
+                [a, b, c].forEach(idx => {
+                    document.querySelector(`.cell[data-index="${idx}"]`).classList.add('winning-cell');
+                });
+
                 // Change background color on win
-                document.body.style.backgroundColor = 'lightgreen'; 
-             
+                document.body.style.backgroundColor = 'lightgreen';
+
                 // Increment wins for current profile
                 incrementWins();
-             
+
                 // Delay the message to allow the background color change to be visible
                 setTimeout(() => {
                     // Check if AI is enabled and the winner is the AI player
-                    const winMessage = (aiEnabled && currentPlayer === aiPlayer) ? 
+                    const winMessage = (aiEnabled && currentPlayer === aiPlayer) ?
                         'AI wins!' : `player ${currentPlayer} wins!`;
                     showModal(winMessage);
                     document.body.style.backgroundColor = ''; // Reset color
@@ -1038,8 +1108,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Dark mode toggle
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+    function initDarkMode() {
+        const isDark = localStorage.getItem('tictactoe_darkMode') === 'true';
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+        }
+    }
+
+    darkModeToggle.addEventListener('change', function() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('tictactoe_darkMode', this.checked);
+    });
+
     // Initialize
     initProfiles();
+    initDarkMode();
     updateAiDisplay();
     updateCurrentTurnDisplay(); // Initialize turn display with proper styling
 });

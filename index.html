@@ -56,6 +56,18 @@
 
     <div id="current-turn">next turn: X</div>
 
+    <div class="scoreboard">
+        <div class="score-item">
+            <span class="score-label">X</span>
+            <span class="score-value" id="score-x">0</span>
+        </div>
+        <div class="score-divider">-</div>
+        <div class="score-item">
+            <span class="score-value" id="score-o">0</span>
+            <span class="score-label">O</span>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2025 hunter bastian</p>
     </footer>
@@ -100,11 +112,18 @@
         </div>
     </div>
 
-    <!-- WIP Modal -->
+    <!-- Settings Modal -->
     <div id="wip-modal" class="modal">
-        <div class="modal-content wip-content">
+        <div class="modal-content wip-content settings-modal-content">
             <span class="wip-close-button close-button">&times;</span>
-            <p>WIP</p>
+            <p class="settings-title">settings</p>
+            <div class="settings-option">
+                <span class="settings-label">dark mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
         </div>
     </div>
 
