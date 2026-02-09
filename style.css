@@ -1,998 +1,305 @@
-/* Global styles */
+:root {
+  --bg: #d4deea;
+  --bg-soft: #e1eaf4;
+  --surface: #dce5ef;
+  --surface-strong: #d1dbe7;
+  --ink: #213042;
+  --muted: #506276;
+  --accent-x: #ff6170;
+  --accent-o: #3f8cff;
+  --accent-win: #27c6a7;
+  --shadow-light: rgba(255, 255, 255, 0.9);
+  --shadow-dark: rgba(131, 152, 177, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background: linear-gradient(to right, rgb(172, 183, 190), rgba(193, 210, 225, 0.8), rgba(240, 248, 255, 1));
-  font-family: 'Roboto Mono', monospace;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  height: 100vh;
   margin: 0;
-  transition: background-color 0.5s ease;
-}
-
-/* Title styling with glow effect */
-h1 {
-  font-family: "Inter", sans-serif;
-  position: relative;
-  display: inline-block;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding: 10px 5px;
-  text-align: center;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  z-index: 1;
-  background-image: linear-gradient(to right, #4a75b8, #7a9ed9);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-h1::after { /* New rule for the underline with faded edges */
-  content: "";
-  display: block;
-  width: 200px; /* Reduced width for a more minimal look */
-  height: 1px; /* Thin line */
-  background: linear-gradient(to right, transparent, #8e9aa7 30%, #8e9aa7 70%, transparent); /* Gradient with faded edges */
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -2px; /* Position it just below the h1 text, within its bottom padding */
-}
-
-/* Styles for the gradient text part of the h1 */
-/* .gradient-text { */
-/*  background-image: linear-gradient(to right, #6A93D4, #a1c4fd); /\* Darker ice-like gradient *\/ */
-/*  background-clip: text; */
-/*  -webkit-background-clip: text; /\* For Safari/Chrome *\/ */
-/*  color: transparent; */
-/* } */
-
-h1::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: -20px;
-  right: -20px;
-  bottom: -10px;
-  z-index: -1;
-  background: radial-gradient(ellipse at center, rgba(52, 152, 219, 0.2) 0%, rgba(52, 152, 219, 0) 70%);
-  border-radius: 50%;
-  filter: blur(10px);
-  opacity: 0.8;
-}
-
-/* Wrapper for vertical centering */
-#game-board-wrapper {
-  position: relative;
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-}
-
-/* Grid styles */
-#game-board {
+  min-height: 100vh;
+  background: radial-gradient(circle at 15% 20%, #ecf3fb 0%, #d9e3ef 42%, #cad6e4 100%);
+  color: var(--ink);
+  font-family: "Sora", "Helvetica Neue", sans-serif;
   display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
-  gap: 5px;
-  margin: 20px auto;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Prevent any overflow during animation */
+  place-items: center;
+  padding: 26px 14px;
+  overflow-x: hidden;
 }
 
-.cell {
-  width: 100px;
-  height: 100px;
-  background-color: #f0f0f0; /* Default background color */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  cursor: pointer;
-  transition: background-color 0.5s ease; /* Add transition for background color */
-}
-
-.cell:hover {
-  background-color: #d5dbdb; /* Slightly darker gray on hover */
-}
-
-/* Button styling */
-button {
-  border: none;
-  border-radius: 4px;
-  padding: 8px 15px;
-  margin: 0 5px;
-  cursor: pointer;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%); /* Glossy effect */
-}
-
-/* Shared button hover style */
-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  filter: brightness(1.1);
-}
-
-/* Button container for consistent spacing */
-.button-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px 0;
-  position: relative; /* For AI menu positioning */
-  gap: 15px; /* Consistent spacing between buttons */
-}
-
-/* Reset button styling */
-.reset-button {
-  background-color: #2980b9;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%);
-  color: white;
-  position: relative;
-  box-shadow: 0 3px 0 #1f6195, 0 4px 6px rgba(0, 0, 0, 0.2);
-  padding: 4px 10px; /* Reduced padding to make button thinner */
-}
-
-.reset-button:hover {
-  background-color: #3498db;
-  box-shadow: 0 3px 0 #1f6195, 0 5px 8px rgba(0, 0, 0, 0.3);
-}
-
-.reset-button:active {
-  transform: translateY(3px);
-  box-shadow: 0 0px 0 #1f6195, 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* Footer styling */
-footer {
-  margin-top: 20px;
-  font-size: 14px;
-  color: #2c3e50;
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Shake animation keyframes (horizontal movement only) */
-@keyframes shake {
-  0%   { transform: translateX(0); }
-  25%  { transform: translateX(-5px); }
-  50%  { transform: translateX(5px); }
-  75%  { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
-}
-
-@keyframes tiny-bounce {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  30% {
-    transform: translateY(-2px);
-    opacity: 0.95;
-  }
-  60% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  80% {
-    transform: translateY(-1px);
-    opacity: 0.98;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.tiny-bounce {
-animation: tiny-bounce 0.15s ease;
-}
-
-/* Grid styles (without animation) */
-.tic-tac-toe-grid {
-  will-change: transform;
-}
-
-/* Shake class to trigger the animation */
-.shake {
-  animation: shake 0.5s ease-in-out;
-}
-
-#current-turn {
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 20px;
-  color: #2c3e50;
-  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
-  padding: 12px 24px;
-  border-radius: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255,255,255,0.3);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-#current-turn.player-x {
-  border-color: rgba(231, 76, 60, 0.3);
-  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
-}
-
-#current-turn.player-o {
-  border-color: rgba(52, 152, 219, 0.3);
-  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
-}
-
-/* Modal styling */
-.modal {
-  display: none;
+.ambient {
   position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
-  transition: background-color 0.3s ease;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 999px;
+  filter: blur(2px);
 }
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 80%;
-  max-width: 400px;
+.ambient-one {
+  width: min(40vw, 420px);
+  height: min(40vw, 420px);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+  top: -120px;
+  left: -90px;
 }
 
-/* Lighter background for profile modal */
-#profile-modal {
-  background-color: transparent; /* No dimming for profile modal */
+.ambient-two {
+  width: min(35vw, 360px);
+  height: min(35vw, 360px);
+  background: radial-gradient(circle, rgba(87, 142, 255, 0.18), rgba(87, 142, 255, 0));
+  bottom: -110px;
+  right: -80px;
 }
 
-.profile-content {
-  width: 70%;
-  max-width: 300px;
-  padding: 20px;
-  padding-bottom: 45px; /* Increased bottom padding to accommodate the warning text */
-  max-height: 80vh;
-  overflow-y: auto;
-  animation: modal-appear 0.3s ease-out; /* Add animation */
+.shell {
+  width: min(980px, 100%);
+  display: grid;
+  gap: 18px;
+  z-index: 1;
 }
 
-/* Animation for modal appearance */
-@keyframes modal-appear {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.card {
+  background: var(--surface);
+  border-radius: 28px;
+  box-shadow: 14px 14px 28px var(--shadow-dark), -14px -14px 28px var(--shadow-light);
 }
 
-/* Animation for modal disappearance */
-@keyframes modal-disappear {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
+.hero {
+  padding: 24px 26px;
 }
 
-.close-button {
-  color: #aaa;
-  float: right;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  position: relative;
-  top: -10px;
-  right: -10px;
+.eyebrow {
   margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+  font-size: 0.74rem;
 }
 
-.close-button:hover,
-.close-button:focus {
-  color: black;
+h1 {
+  margin: 8px 0 4px;
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  line-height: 1.12;
 }
 
-/* Profile styling */
-.profile-header {
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: 1px solid #eee;
-  font-size: 14px;
+.subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+  max-width: 60ch;
 }
 
-.profile-form {
-  margin: 15px 0;
-  padding: 10px 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-  display: flex;
+.controls-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.panel {
+  padding: 16px;
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  justify-content: center;
 }
 
-#profile-name {
-  padding: 5px 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 12px;
-  width: 120px;
+#difficulty-panel .segmented {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-#profile-list {
-  margin-top: 10px;
-  max-height: 150px;
-  overflow-y: auto;
-  padding: 5px 0;
+.mode-btn,
+.difficulty-btn,
+.action-btn {
+  border: 0;
+  border-radius: 14px;
+  padding: 11px 10px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  cursor: pointer;
+  box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light);
+  transition: transform 160ms ease, box-shadow 160ms ease, color 160ms ease;
 }
 
-.profile-item {
+.mode-btn:hover,
+.difficulty-btn:hover,
+.action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.mode-btn:active,
+.difficulty-btn:active,
+.action-btn:active,
+.mode-btn.is-active,
+.difficulty-btn.is-active {
+  box-shadow: inset 5px 5px 12px rgba(128, 149, 173, 0.45), inset -5px -5px 12px rgba(255, 255, 255, 0.8);
+}
+
+.mode-btn.is-active,
+.difficulty-btn.is-active {
+  color: #0f5bc9;
+}
+
+#difficulty-panel.is-disabled {
+  opacity: 0.62;
+}
+
+.score-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.score-pill {
+  border-radius: 16px;
+  padding: 10px 8px;
+  text-align: center;
+  box-shadow: inset 4px 4px 10px rgba(130, 149, 171, 0.42), inset -4px -4px 10px rgba(255, 255, 255, 0.83);
+}
+
+.score-pill .label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.score-pill .value {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.board-wrap {
+  padding: 18px;
+}
+
+.status-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 8px;
-  margin: 4px 0;
-  background-color: #f5f5f5;
-  border-radius: 3px;
-  font-size: 12px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.profile-item:hover {
-  background-color: #e8e8e8;
+#status-text {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 600;
 }
 
-.profile-item button {
-  padding: 3px 6px;
-  font-size: 11px;
+.turn-chip {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  border-radius: 999px;
+  box-shadow: inset 4px 4px 9px rgba(128, 149, 173, 0.45), inset -4px -4px 9px rgba(255, 255, 255, 0.85);
 }
 
-/* Profile button styling */
-.profile-button {
-  background-color: #34495e;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.15) 100%);
-  color: white;
-  position: relative;
-  box-shadow: 0 3px 0 #2c3e50, 0 4px 6px rgba(0, 0, 0, 0.2);
-  padding: 4px 10px; /* Reduced padding to make button thinner */
+.turn-chip.turn-x {
+  color: #c73d50;
 }
 
-.profile-button:hover {
-  background-color: #3d5a75;
-  box-shadow: 0 3px 0 #2c3e50, 0 5px 8px rgba(0, 0, 0, 0.3);
+.turn-chip.turn-o {
+  color: #1763ce;
 }
 
-.profile-button:active {
-  transform: translateY(3px);
-  box-shadow: 0 0px 0 #2c3e50, 0 1px 2px rgba(0, 0, 0, 0.2);
+.turn-chip.turn-end {
+  color: #0d8a72;
 }
 
-/* Save profile button */
-#save-profile {
-  background-color: #2980b9;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%);
-  color: white;
-  font-size: 12px;
-  padding: 6px 12px;
-  box-shadow: 0 3px 0 #1f6195, 0 4px 6px rgba(0, 0, 0, 0.2);
+.canvas-shell {
+  width: min(84vmin, 540px);
+  margin: 0 auto;
+  border-radius: 30px;
+  padding: 18px;
+  background: var(--bg-soft);
+  box-shadow: inset 9px 9px 20px rgba(130, 149, 171, 0.36), inset -9px -9px 20px rgba(255, 255, 255, 0.84);
 }
 
-#save-profile:hover {
-  background-color: #3498db;
-  box-shadow: 0 3px 0 #1f6195, 0 5px 8px rgba(0, 0, 0, 0.3);
+#game-canvas {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
+  border-radius: 20px;
+  outline: none;
 }
 
-#save-profile:active {
-  transform: translateY(3px);
-  box-shadow: 0 0px 0 #1f6195, 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.profile-stats {
-  margin: 8px 0;
-  padding: 8px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  text-align: center;
-  display: flex;
-  justify-content: space-around;
-}
-
-.stat-item {
-  font-size: 12px;
-  color: #555;
-}
-
-.stat-item:first-child {
-  color: #2980b9; /* X wins in blue */
-}
-
-.stat-item:last-child {
-  color: #2c4a7c; /* O wins in darker blue */
-}
-
-#modal-message {
-}
-
-/* AI Button Styling */
-.ai-button {
-  background-color: #f0f0f0; /* Light gray neutral color */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%);
-  color: #333;
-  box-shadow: 0 3px 0 #c0c0c0, 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 110px; /* Increased from 78px to make it longer */
-  height: 31px; 
-  position: relative; /* For absolute positioning of the inner content */
-  padding: 0; /* Restored (implicitly by removing other padding) */
-}
-
-.ai-button:hover {
-  background-color: #e5e5e5;
-  box-shadow: 0 3px 0 #c0c0c0, 0 5px 8px rgba(0, 0, 0, 0.2);
-}
-
-.ai-button:active {
-  transform: translateY(3px);
-  box-shadow: 0 0px 0 #c0c0c0, 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.ai-button.active {
-  background-color: #c8c8c8; /* Darker gray when active */
-}
-
-.ai-button.selected {
-  background-color: #4285f4; /* Google blue for selected state */
-  color: white;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%);
-  box-shadow: 0 3px 0 #3367d6, 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.ai-button.selected:hover {
-  background-color: #5294ff;
-  box-shadow: 0 3px 0 #3367d6, 0 5px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Animation for AI menu appearance that preserves horizontal centering */
-@keyframes ai-menu-appear {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* Animation for AI menu disappearance */
-@keyframes ai-menu-disappear {
-  from {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-}
-
-/* AI Controls */
-.ai-controls {
-  display: none; /* Hidden by default */
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: #f8f8f8;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  width: 80%;
-  max-width: 300px;
-  position: absolute;
-  top: 45px; /* Fixed position below buttons */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-  border: 1px solid #ddd;
-  animation: ai-menu-appear 0.3s ease-out; /* Use AI-specific animation */
-}
-
-/* Difficulty label styling */
-.difficulty-label {
-  margin-bottom: 8px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 14px;
-}
-
-.difficulty-buttons {
+.actions-row {
   display: flex;
   justify-content: center;
   gap: 10px;
+  margin-top: 16px;
 }
 
-.difficulty-btn {
-  padding: 5px 10px;
-  border: 1px solid transparent; /* Add transparent border by default */
-  border-radius: 3px;
-  background-color: #e0e0e0;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.1) 100%); /* Glossy effect */
-  cursor: pointer;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 12px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 0 #c0c0c0, 0 3px 4px rgba(0, 0, 0, 0.1);
+.action-btn {
+  min-width: 138px;
 }
 
-/* Default hover state (for easy button) */
-.difficulty-btn:hover {
-  background-color: #e8f5e8; /* Very light green tint */
-  background-image: linear-gradient(to bottom, rgba(144,238,144,0.2) 0%, rgba(0,0,0,0.05) 100%); /* Faint green glossy effect */
-  transform: translateY(-1px);
-  box-shadow: 0 3px 0 #c0c0c0, 0 4px 6px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(144,238,144,0.4); /* Light green border */
-}
-
-/* Medium button (yellow) hover state */
-#medium-btn:hover {
-  background-color: #fffae8; /* Very light yellow tint */
-  background-image: linear-gradient(to bottom, rgba(255,223,0,0.2) 0%, rgba(0,0,0,0.05) 100%); /* Faint yellow glossy effect */
-  border: 1px solid rgba(255,223,0,0.4); /* Light yellow border */
-}
-
-/* Hard button (red) hover state */
-#hard-btn:hover {
-  background-color: #fff0f0; /* Very light red tint */
-  background-image: linear-gradient(to bottom, rgba(255,99,71,0.2) 0%, rgba(0,0,0,0.05) 100%); /* Faint red glossy effect */
-  border: 1px solid rgba(255,99,71,0.4); /* Light red border */
-}
-
-.difficulty-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 0px 0 #c0c0c0, 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Default selected state (for easy button) */
-.difficulty-btn.selected {
-  background-color: #90EE90; /* Light green */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%); /* Glossier effect */
-  color: #333;
-  box-shadow: 0 2px 0 #70cc70, 0 3px 4px rgba(0, 0, 0, 0.2);
-  border: 1px solid #70cc70; /* Green border for selected state */
-}
-
-/* Medium button (yellow) selected state */
-#medium-btn.selected {
-  background-color: #FFE766; /* Light yellow */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%);
-  box-shadow: 0 2px 0 #D4B52C, 0 3px 4px rgba(0, 0, 0, 0.2);
-  border: 1px solid #D4B52C; /* Yellow border for selected state */
-}
-
-/* Hard button (red) selected state */
-#hard-btn.selected {
-  background-color: #FF6347; /* Tomato red */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%);
-  box-shadow: 0 2px 0 #D4342C, 0 3px 4px rgba(0, 0, 0, 0.2);
-  border: 1px solid #D4342C; /* Red border for selected state */
-  color: white; /* Better contrast with the red background */
-}
-
-.enable-ai-container {
-  margin-top: 12px;
-  width: 100%;
+.hint {
+  margin: 12px 0 0;
   text-align: center;
+  color: var(--muted);
+  font-size: 0.84rem;
 }
 
-.enable-ai-btn {
-  background-color: #FF6347; /* Tomato */
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.enable-ai-btn:hover {
-  background-color: #FF4500; /* OrangeRed */
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-}
-
-.enable-ai-btn.active {
-  background-color: #32CD32; /* LimeGreen */
-}
-
-/* AI Button Group styling */
-.ai-button-group {
-  display: flex;
-  align-items: center;
-}
-
-/* AI Difficulty indicator styling */
-.difficulty-indicator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 24px;
-  padding: 2px 8px 0; /* Adjusted padding to move text down slightly */
-  margin-left: -1px;
-  border-radius: 0 4px 4px 0;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 12px;
-  background-color: #f8f8f8;
-  border: 1px solid #ddd;
-  color: #333;
-  position: relative;
-  line-height: 24px; /* Match the height for vertical centering */
-  text-align: center; /* Ensure text is horizontally centered too */
-}
-
-/* Different colors for difficulty indicators */
-.difficulty-indicator.easy {
-  background-color: #90EE90; /* Light green */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%);
-  border: 1px solid #70cc70;
-}
-
-.difficulty-indicator.medium {
-  background-color: #FFE766; /* Light yellow */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%);
-  border: 1px solid #D4B52C;
-}
-
-.difficulty-indicator.hard {
-  background-color: #FF6347; /* Tomato red */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%);
-  border: 1px solid #D4342C;
-  color: white;
-}
-
-/* Modify AI button to connect with the indicator */
-.ai-button-group .ai-button {
-  border-radius: 4px 0 0 4px;
-  margin-right: 0;
-}
-
-.ai-reset-icon {
-  display: none;
-  position: absolute;
-  font-size: 12px;
-  top: 4px;
-  right: 4px;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  line-height: 14px;
-  text-align: center;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-.ai-reset-icon:hover {
-  color: white;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.ai-button.active .ai-reset-icon {
-  display: block;
-}
-
-.ai-button .text-container {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ai-button .default-text,
-.ai-button .hover-text {
-  position: absolute;
-  transition: opacity 0.6s ease;
-  font-size: 14px;
-}
-
-.ai-button .default-text {
-  opacity: 1;
-}
-
-.ai-button .hover-text {
-  opacity: 0;
-  color: #4285f4; /* Blue color for "ai" text */
-}
-
-.ai-button:hover .default-text {
-  opacity: 0;
-}
-
-.ai-button:hover .hover-text {
-  opacity: 1;
-}
-
-/* Keep the default text visible when hovering over the active AI button */
-.ai-button.active:hover .default-text {
-  opacity: 1;
-}
-
-/* Keep the hover text hidden when hovering over the active AI button */
-.ai-button.active:hover .hover-text {
-  opacity: 0;
-}
-
-/* Remove the old hover styles */
-.ai-button:hover span:first-child {
-  color: inherit;
-}
-
-.ai-button span:first-child {
-  transition: none;
-}
-
-.ai-button:hover .default-text {
-  opacity: 0;
-}
-
-/* Keep the default text visible when hovering over the active AI button */
-.ai-button.active:hover .default-text {
-  opacity: 1;
-}
-
-.ai-button:hover .hover-text {
-  opacity: 1;
-}
-
-/* Keep the hover text hidden when hovering over the active AI button */
-.ai-button.active:hover .hover-text {
-  opacity: 0;
-}
-
-/* Blurred game board when waiting for AI settings */
-#game-board.waiting-for-settings {
-  filter: blur(3px);
-  pointer-events: none; /* Prevent interaction with the board */
-  opacity: 0.7;
-  transition: all 0.3s ease;
-}
-
-/* Overlay message for AI settings prompt */
-.settings-overlay {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #333;
-  padding: 10px 15px;
+kbd {
+  font-family: "Space Mono", monospace;
+  font-size: 0.78rem;
+  padding: 1px 5px;
   border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  font-size: 14px;
-  text-align: center;
-  font-weight: 500;
-  border: 1px solid #ddd;
+  box-shadow: inset 2px 2px 5px rgba(131, 152, 177, 0.46), inset -2px -2px 5px rgba(255, 255, 255, 0.9);
 }
 
-.settings-overlay.visible {
-  display: block;
-  animation: bounce-in 0.4s ease-out;
-}
-
-@keyframes bounce-in {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  70% {
-    transform: translate(-50%, -48%);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* Reset Profile Button */
-.reset-profile-container {
-  margin-top: 30px; /* Increased from 20px to move the button lower */
-  text-align: center;
-  position: relative;
-}
-
-.reset-profile-button {
-  background-color: #e74c3c;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.15) 100%);
-  color: white;
-  font-size: 12px;
-  padding: 4px 10px; /* Reduced from 6px 12px to make the button thinner */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  position: relative;
-  box-shadow: 0 3px 0 #c0392b, 0 4px 6px rgba(0, 0, 0, 0.2);
-  font-family: 'Roboto Mono', monospace;
-  /* Add dimmed appearance by default */
-  opacity: 0.6;
-  filter: grayscale(30%);
-  transition: opacity 0.3s ease, filter 0.3s ease, background-color 0.3s ease;
-}
-
-/* Style for when button has been clicked once and is waiting for hover */
-.reset-profile-button.active {
-  opacity: 0.8;
-  filter: grayscale(15%);
-  background-color: #e74c3c;
-  box-shadow: 0 3px 0 #c0392b, 0 4px 6px rgba(231, 76, 60, 0.4);
-  border: 1px solid rgba(231, 76, 60, 0.7);
-}
-
-.reset-profile-button.countdown {
-  /* Keep the same dimmed appearance during countdown */
-  opacity: 0.6;
-  filter: grayscale(30%);
-}
-
-.reset-profile-button:hover {
-  background-color: #e55e4e;
-  box-shadow: 0 3px 0 #c0392b, 0 5px 8px rgba(0, 0, 0, 0.3);
-  /* Don't change opacity on hover unless it's ready */
-}
-
-.reset-profile-button:active {
-  transform: translateY(3px);
-  box-shadow: 0 0px 0 #c0392b, 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.reset-profile-button.ready {
-  opacity: 1;
-  filter: none;
-  animation: pulse-red 1s infinite;
-}
-
-@keyframes pulse-red {
-  0% {
-    box-shadow: 0 3px 0 #c0392b, 0 4px 6px rgba(231, 76, 60, 0.4);
-  }
-  50% {
-    box-shadow: 0 3px 0 #c0392b, 0 4px 10px rgba(231, 76, 60, 0.7);
-  }
-  100% {
-    box-shadow: 0 3px 0 #c0392b, 0 4px 6px rgba(231, 76, 60, 0.4);
-  }
-}
-
-.reset-warning {
-  position: absolute;
-  bottom: -25px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 10px;
-  white-space: nowrap;
-  pointer-events: none;
+.rise-a,
+.rise-b,
+.rise-c {
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transform: translateY(16px) scale(0.99);
+  animation: rise-in 650ms ease forwards;
 }
 
-/* Profile Stats Container */
-.profile-stats {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 5px;
+.rise-b {
+  animation-delay: 100ms;
 }
 
-.stat-item {
-  font-size: 12px;
-  color: #555;
+.rise-c {
+  animation-delay: 180ms;
 }
 
-/* Header Container for Logo and Title */
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%; /* Ensure it spans full width to center its content */
-  margin-top: 30px; /* Maintains original top margin of h1 */
-  margin-bottom: 20px; /* Added to create more space below the header */
-  /* Add any other overall positioning for the header group here if needed */
+@keyframes rise-in {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* Logo Styles */
-.website-logo {
-  max-width: 60px;
-  /* margin: 0 15px 0 0; Removed, no longer next to title */
-  position: fixed; /* Position relative to the viewport */
-  top: 20px;       /* Distance from the top */
-  left: 20px;      /* Distance from the left */
-  /* z-index: 1000; Removed - likely not needed anymore */
-}
+@media (max-width: 880px) {
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
 
-/* .settings-icon { */
-/*  max-width: 60px; /\* Increased size, adjust as needed *\/ */
-/*  cursor: pointer; /\* Assuming it will be clickable *\/ */
-/* } */
+  .status-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-/* Settings Button Styling - designed to look like reset-button but for an icon */
-.settings-button {
-  background-color: #f0f0f0; 
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%); 
-  border: none; 
-  border-radius: 4px; 
-  padding: 8px 12px; /* Adjusted padding */
-  margin: 0 5px; 
-  cursor: pointer; 
-  position: relative; 
-  box-shadow: 0 2px 4px rgba(0,0,0,0.12); /* Softer shadow */
-  transition: all 0.3s ease; 
-  display: inline-flex; 
-  align-items: center;
-  justify-content: center;
-  color: #333; 
-  font-family: "Inter", sans-serif; /* Changed font */
-  font-size: 14px; 
-}
-
-.settings-button:hover {
-  background-color: #e5e5e5; 
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Adjusted hover shadow */
-  transform: translateY(-1px); 
-  filter: brightness(1.1); 
-}
-
-.settings-button:active {
-  transform: translateY(1px); /* Subtler press */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Adjusted active shadow */
-}
-
-.settings-button img {
-  width: 20px; 
-  height: 20px; 
-  margin-right: 5px; 
-}
-
-/* Icon specifically for the AI button's default text */
-.ai-icon-beside-text {
-  width: 15px; /* Slightly adjusted size */
-  height: 15px; /* Slightly adjusted size */
-  margin-right: 5px; /* Slightly increased spacing */
-  vertical-align: middle; /* Helps align with text */
-  display: inline-block; /* Ensure proper layout box */
-}
-
-/* WIP Modal Specific Styles */
-#wip-modal {
-  background-color: transparent; /* Remove dark overlay, just use blur */
-}
-
-.wip-content {
-  max-width: 200px; /* Smaller than other modals */
-  padding: 25px; /* A bit more padding for the short message */
-  text-align: center;
-  font-size: 1.2em;
+  .actions-row {
+    flex-wrap: wrap;
+  }
 }

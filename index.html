@@ -1,113 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mini tic tac toe v2</title>
   <link rel="icon" type="image/png" href="images/square.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Roboto+Mono&display=swap" rel="stylesheet">
-  <title>minimalist tic tac toe</title>
 </head>
 <body>
-    <div class="header-container">
-        <h1>minimalist tic tac toe</h1>
-    </div>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
 
-  <div class="button-container">
-    <button id="reset" class="reset-button">reset</button>
-    <button id="profile-btn" class="profile-button"><span id="current-profile">guest</span></button>
-    <div class="ai-button-group">
-      <button id="ai-toggle-btn" class="ai-button">
-        <span class="text-container">
-          <span class="default-text"><img src="images/AI.svg" alt="AI Icon" class="ai-icon-beside-text"> vs human</span>
-          <span class="hover-text">AI</span>
-        </span>
-        <span id="ai-reset" class="ai-reset-icon">&times;</span>
-      </button>
-      <div id="current-difficulty" class="difficulty-indicator">medium</div>
-    </div>
-    <button id="settings-btn" class="settings-button"><img src="images/settings.svg" alt="Settings"> settings</button>
-  </div>
+  <main class="shell">
+    <header class="hero card rise-a">
+      <p class="eyebrow">mini tictactoe</p>
+      <h1>V2.0 Neomorph</h1>
+      <p class="subtitle">A full visual rebuild with softer depth, cleaner logic, and better game feel.</p>
+    </header>
 
-  <!-- AI Difficulty Controls (hidden by default) -->
-  <div id="ai-controls" class="ai-controls">
-    <div class="difficulty-label">AI difficulty:</div>
-    <div class="difficulty-buttons">
-      <button id="easy-btn" class="difficulty-btn">easy</button>
-      <button id="medium-btn" class="difficulty-btn selected">medium</button>
-      <button id="hard-btn" class="difficulty-btn">hard</button>
-    </div>
-  </div>
-
-  <div id="game-board-wrapper">
-    <div id="ai-settings-message" class="settings-overlay">Please select AI difficulty</div>
-    <div id="game-board" class="tic-tac-toe-grid">
-      <div class="cell" data-index="0"></div>
-      <div class="cell" data-index="1"></div>
-      <div class="cell" data-index="2"></div>   
-      <div class="cell" data-index="3"></div>
-      <div class="cell" data-index="4"></div>
-      <div class="cell" data-index="5"></div>
-      <div class="cell" data-index="6"></div>
-      <div class="cell" data-index="7"></div>
-      <div class="cell" data-index="8"></div>
-    </div>
-  </div>
-
-    <div id="current-turn">next turn: X</div>
-
-    <footer>
-        <p>&copy; 2025 hunter bastian</p>
-    </footer>
-
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <p id="modal-message">Player X wins!</p>
+    <section class="controls-grid rise-b">
+      <article class="card panel">
+        <h2>Mode</h2>
+        <div class="segmented" role="tablist" aria-label="Game mode">
+          <button class="mode-btn is-active" data-mode="human" role="tab" aria-selected="true">vs Human</button>
+          <button class="mode-btn" data-mode="ai" role="tab" aria-selected="false">vs AI</button>
         </div>
-    </div>
-    
-    <!-- Simplified Profile Modal -->
-    <div id="profile-modal" class="modal">
-        <div class="modal-content profile-content">
-            <span class="profile-close close-button">&times;</span>
-            
-            <!-- Profile selection list at the top -->
-            <div id="profile-list">
-                <!-- Profile list will be populated dynamically -->
-            </div>
-            
-            <!-- Profile form in the middle -->
-            <div class="profile-form">
-                <input type="text" id="profile-name" placeholder="new profile">
-                <button id="save-profile" class="profile-button">save</button>
-            </div>
-            
-            <!-- Current profile info at the bottom -->
-            <div class="profile-header">
-                <p><span id="current-profile-display">guest</span></p>
-                <div class="profile-stats" id="profile-stats-container">
-                    <div class="stat-item">X wins: <span id="profile-x-wins">0</span></div>
-                    <div class="stat-item">O wins: <span id="profile-o-wins">0</span></div>
-                </div>
-            </div>
+      </article>
 
-            <!-- Reset Profile Button -->
-            <div class="reset-profile-container">
-                <button id="reset-profile-btn" class="reset-profile-button">reset profile</button>
-                <div id="reset-warning" class="reset-warning">Warning: This will reset all stats</div>
-            </div>
+      <article class="card panel" id="difficulty-panel">
+        <h2>AI Difficulty</h2>
+        <div class="segmented" role="group" aria-label="AI difficulty">
+          <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+          <button class="difficulty-btn is-active" data-difficulty="medium">Medium</button>
+          <button class="difficulty-btn" data-difficulty="hard">Hard</button>
         </div>
-    </div>
+      </article>
 
-    <!-- WIP Modal -->
-    <div id="wip-modal" class="modal">
-        <div class="modal-content wip-content">
-            <span class="wip-close-button close-button">&times;</span>
-            <p>WIP</p>
+      <article class="card panel score-panel">
+        <h2>Scoreboard</h2>
+        <div class="score-grid">
+          <div class="score-pill">
+            <span class="label">X</span>
+            <span class="value" id="score-x">0</span>
+          </div>
+          <div class="score-pill">
+            <span class="label">O</span>
+            <span class="value" id="score-o">0</span>
+          </div>
+          <div class="score-pill">
+            <span class="label">Draw</span>
+            <span class="value" id="score-draw">0</span>
+          </div>
         </div>
-    </div>
+      </article>
+    </section>
 
-    <script src="script.js"></script>
+    <section class="card board-wrap rise-c">
+      <div class="status-row">
+        <p id="status-text">X to move</p>
+        <span id="turn-chip" class="turn-chip">Turn: X</span>
+      </div>
+
+      <div class="canvas-shell">
+        <canvas id="game-canvas" width="600" height="600" tabindex="0" aria-label="Tic tac toe board"></canvas>
+      </div>
+
+      <div class="actions-row">
+        <button id="new-round-btn" class="action-btn">New Round</button>
+        <button id="reset-score-btn" class="action-btn">Reset Score</button>
+      </div>
+
+      <p class="hint">Click a cell or use arrow keys + space/enter. Press <kbd>f</kbd> for fullscreen.</p>
+    </section>
+  </main>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
