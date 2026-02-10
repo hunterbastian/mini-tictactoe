@@ -56,6 +56,24 @@
     dpr: 1,
   };
 
+  const THEME = {
+    boardBgNear: "#3f4759",
+    boardBgFar: "#2d3442",
+    shellBase: "#3b4355",
+    shellStrokeLight: "rgba(216, 222, 233, 0.12)",
+    shellStrokeDark: "rgba(10, 13, 19, 0.38)",
+    shadowDark: "rgba(8, 11, 17, 0.5)",
+    shadowLight: "rgba(236, 239, 244, 0.08)",
+    highlightX: "rgba(191, 97, 106, 0.58)",
+    highlightO: "rgba(129, 161, 193, 0.58)",
+    markXA: "#d08770",
+    markXB: "#bf616a",
+    markOA: "#88c0d0",
+    markOB: "#5e81ac",
+    winLine: "rgba(163, 190, 140, 0.96)",
+    winGlow: "rgba(163, 190, 140, 0.34)",
+  };
+
   function pickRandom(items) {
     if (!items.length) {
       return null;
@@ -381,7 +399,7 @@
   }
 
   function drawSoftRect(x, y, width, height, radius, inset) {
-    const base = "#dce5ef";
+    const base = THEME.shellBase;
 
     ctx.save();
     roundedRectPath(x, y, width, height, radius);
@@ -392,31 +410,31 @@
     if (inset) {
       ctx.save();
       roundedRectPath(x + 1.2, y + 1.2, width - 2.4, height - 2.4, Math.max(8, radius - 1));
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.78)";
-      ctx.lineWidth = 2.1;
+      ctx.strokeStyle = THEME.shellStrokeLight;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
       roundedRectPath(x + 1.8, y + 1.8, width - 3.6, height - 3.6, Math.max(8, radius - 2));
-      ctx.strokeStyle = "rgba(132, 151, 173, 0.52)";
-      ctx.lineWidth = 2.1;
+      ctx.strokeStyle = THEME.shellStrokeDark;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.restore();
       return;
     }
 
     ctx.save();
-    ctx.shadowColor = "rgba(130, 149, 172, 0.4)";
-    ctx.shadowBlur = 16;
-    ctx.shadowOffsetX = 8;
-    ctx.shadowOffsetY = 8;
+    ctx.shadowColor = THEME.shadowDark;
+    ctx.shadowBlur = 9;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 4;
     roundedRectPath(x, y, width, height, radius);
     ctx.fillStyle = base;
     ctx.fill();
 
-    ctx.shadowColor = "rgba(255, 255, 255, 0.92)";
-    ctx.shadowBlur = 14;
-    ctx.shadowOffsetX = -8;
-    ctx.shadowOffsetY = -8;
+    ctx.shadowColor = THEME.shadowLight;
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = -3;
+    ctx.shadowOffsetY = -3;
     roundedRectPath(x, y, width, height, radius);
     ctx.fillStyle = base;
     ctx.fill();
@@ -429,11 +447,11 @@
     ctx.globalAlpha = alpha;
     ctx.lineWidth = size * 0.1;
     ctx.lineCap = "round";
-    ctx.shadowColor = "rgba(255, 98, 121, 0.4)";
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = "rgba(191, 97, 106, 0.34)";
+    ctx.shadowBlur = 7;
     const gradient = ctx.createLinearGradient(cx - arm, cy - arm, cx + arm, cy + arm);
-    gradient.addColorStop(0, "#ff8892");
-    gradient.addColorStop(1, "#ff475f");
+    gradient.addColorStop(0, THEME.markXA);
+    gradient.addColorStop(1, THEME.markXB);
     ctx.strokeStyle = gradient;
 
     ctx.beginPath();
@@ -450,11 +468,11 @@
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.lineWidth = size * 0.09;
-    ctx.shadowColor = "rgba(68, 146, 255, 0.35)";
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = "rgba(129, 161, 193, 0.3)";
+    ctx.shadowBlur = 7;
     const gradient = ctx.createLinearGradient(cx - radius, cy - radius, cx + radius, cy + radius);
-    gradient.addColorStop(0, "#70b0ff");
-    gradient.addColorStop(1, "#2f7dff");
+    gradient.addColorStop(0, THEME.markOA);
+    gradient.addColorStop(1, THEME.markOB);
     ctx.strokeStyle = gradient;
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -485,9 +503,9 @@
       return;
     }
 
-    const bg = ctx.createRadialGradient(m.size * 0.22, m.size * 0.18, 30, m.size * 0.5, m.size * 0.52, m.size * 0.65);
-    bg.addColorStop(0, "#edf3fa");
-    bg.addColorStop(1, "#ced9e7");
+    const bg = ctx.createRadialGradient(m.size * 0.24, m.size * 0.2, 30, m.size * 0.5, m.size * 0.52, m.size * 0.68);
+    bg.addColorStop(0, THEME.boardBgNear);
+    bg.addColorStop(1, THEME.boardBgFar);
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, m.size, m.size);
 
@@ -503,8 +521,8 @@
       if (highlighted) {
         ctx.save();
         roundedRectPath(rect.x + 3, rect.y + 3, rect.w - 6, rect.h - 6, rect.w * 0.16);
-        ctx.strokeStyle = state.currentPlayer === "X" ? "rgba(255, 95, 113, 0.42)" : "rgba(65, 137, 255, 0.42)";
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = state.currentPlayer === "X" ? THEME.highlightX : THEME.highlightO;
+        ctx.lineWidth = 2;
         ctx.stroke();
         ctx.restore();
       }
@@ -553,11 +571,11 @@
       const ty = ay + (by - ay) * progress;
 
       ctx.save();
-      ctx.strokeStyle = "rgba(39, 198, 167, 0.95)";
+      ctx.strokeStyle = THEME.winLine;
       ctx.lineWidth = Math.max(6, m.size * 0.012);
       ctx.lineCap = "round";
-      ctx.shadowColor = "rgba(39, 198, 167, 0.4)";
-      ctx.shadowBlur = 12;
+      ctx.shadowColor = THEME.winGlow;
+      ctx.shadowBlur = 10;
       ctx.beginPath();
       ctx.moveTo(ax, ay);
       ctx.lineTo(tx, ty);

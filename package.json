@@ -1,0 +1,10 @@
+{
+  "name": "mini-tictactoe",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Mini Tic Tac Toe (static web app)",
+  "scripts": {
+    "dev": "python3 -m http.server 4173",
+    "start": "python3 -m http.server 4173"
+  }
+}
